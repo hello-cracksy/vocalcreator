@@ -12,7 +12,7 @@ class VowelGenerator:
 
     def _slice(self, wave, start, end=None):
         s = int(self.sr * start)
-        e = int(self.sr * end) if end else None
+        e = int(self.sr * end) if end is not None else None
         return wave[s:e]
 
     def _f(self, wave, key):

@@ -16,6 +16,8 @@ class VowelGenerator:
         return wave[s:e]
 
     def _f(self, wave, key):
+        if key not in self.formants:
+            raise ValueError(f"Unknown formant key: {key}")
         return _utils.bpf(wave, self.formants[key])
 
     def _norm(self, x):

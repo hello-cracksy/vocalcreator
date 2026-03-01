@@ -1,3 +1,5 @@
+from . import _utils
+
 class VowelGenerator:
     def __init__(self, formants, sr, cutoff=4500):
         self.formants = formants
@@ -6,7 +8,7 @@ class VowelGenerator:
 
     # ===== 共通ユーティリティ =====
     def _pulse(self, freq, t):
-        return bandlimit_pulse(freq, t, cutoff=self.cutoff)
+        return _utils.bandlimit_pulse(freq, t, cutoff=self.cutoff)
 
     def _slice(self, wave, start, end=None):
         s = int(self.sr * start)
@@ -14,10 +16,10 @@ class VowelGenerator:
         return wave[s:e]
 
     def _f(self, wave, key):
-        return bpf(wave, self.formants[key])
+        return _utils.bpf(wave, self.formants[key])
 
     def _norm(self, x):
-        return normalize(x)
+        return _utils.normalize(x)
 
     # ===== 基本母音 =====
     def generate(self, freq, t, vowel):
@@ -25,16 +27,16 @@ class VowelGenerator:
         return self._norm(self._f(base, vowel))
 
     # ===== u系 =====
-    def u(self, freq, t, vowel):
+    def u_generate(self, freq, t, vowel):
         base = self._pulse(freq, t)
         return self._norm(
-            crossfade_add(
+            _utils.crossfade_add(
                 self._f(self._slice(base, 0, 0.06), "u"),
                 self._f(self._slice(base, 0.06), vowel)
             )
         )
 
-    def nu(self, freq, t, vowel):
+    def nu_generate(self, freq, t, vowel):
         base = self._pulse(freq, t)
 
         n = (
@@ -44,10 +46,10 @@ class VowelGenerator:
         u = self._f(self._slice(base, 0.05, 0.08), "u")
         v = self._f(self._slice(base, 0.08), vowel)
 
-        return self._norm(crossfade_add_many([n, u, v]))
+        return self._norm(_utils.crossfade_add_many([n, u, v]))
 
     # ===== ny =====
-    def ny(self, freq, t, vowel):
+    def ny_generate(self, freq, t, vowel):
         base = self._pulse(freq, t)
 
         n = self._f(self._slice(base, 0, 0.04), "n")
@@ -55,24 +57,24 @@ class VowelGenerator:
         u = self._f(self._slice(base, 0.08, 0.11), "u")
         v = self._f(self._slice(base, 0.11), vowel)
 
-        return self._norm(crossfade_add_many([n, y, u, v]))
+        return self._norm(_utils.crossfade_add_many([n, y, u, v]))
 
     # ===== y =====
-    def y(self, freq, t, vowel):
+    def y_generate(self, freq, t, vowel):
         base = self._pulse(freq, t)
 
         y = self._f(self._slice(base, 0, 0.06), "y")
         u = self._f(self._slice(base, 0.06, 0.12), "u")
         v = self._f(self._slice(base, 0.12), vowel)
 
-        return self._norm(crossfade_add_many([y, u, v]))
+        return self._norm(_utils.crossfade_add_many([y, u, v]))
 
     # ===== w =====
-    def w(self, freq, t, vowel):
+    def w_generate(self, freq, t, vowel):
         base = self._pulse(freq, t)
 
         w = self._f(self._slice(base, 0, 0.06), "w")
         u = self._f(self._slice(base, 0.06, 0.12), "u")
         v = self._f(self._slice(base, 0.12), vowel)
 
-        return self._norm(crossfade_add_many([w, u, v]))
+        return self._norm(_utils.crossfade_add_many([w, u, v]))

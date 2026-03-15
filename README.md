@@ -17,3 +17,4 @@
 | BURST | 破裂音 |
 | NASAL | 鼻音 |
 | voiced | 有声音 |
+| prime | 素（複合子音とかの） |
